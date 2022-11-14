@@ -24,9 +24,9 @@
 
 ; esta-en :: Map -> List Map (Long Long Map (String Long)) -> Bool
 (defn- esta-en [elt lista clave]
-  (cond (not (map? elt)) (println "El primer argumento de la función esta-en debe ser un diccionario.")
-        (not (list? lista)) (println "El segundo argumento de la función esta-en debe ser una lista.")
-        (not (keyword? clave)) (println "El tercer argumento de la función esta-en debe ser un keyword.")
+  (cond (not (map? elt)) (println "El primer argumento de la función 'esta-en' debe ser un diccionario.")
+        (not (list? lista)) (println "El segundo argumento de la función 'esta-en' debe ser una lista.")
+        (not (keyword? clave)) (println "El tercer argumento de la función 'esta-en' debe ser un keyword.")
         :else (if (= lista '())
                 false
                 (let [filtro (fn [elt-filter]
@@ -36,22 +36,41 @@
 
 ; insertar :: Map -> (Map) -> String -> (Map)
 (defn insertar [nuevo-dato datos nombre-fichero]
-  (cond (not (map? nuevo-dato)) (println "El primer parámetro debe ser un diccionario.")
-        (not (list? datos)) (println "El segundo parámetro debe ser una lista.")
-        (not (string? nombre-fichero)) (println "El tercer parámetro debe ser una cadena.")
+  (cond (not (map? nuevo-dato)) (println "El primer parámetro de la función 'insertar' debe ser un diccionario.")
+        (not (list? datos)) (println "El segundo parámetro de la función 'insertar' debe ser una lista.")
+        (not (string? nombre-fichero)) (println "El tercer parámetro de la función 'insertar' debe ser una cadena.")
         (esta-en nuevo-dato datos :value) (println "El nuevo dato ya está en la lista de datos.")
-        :else (let [ultimo-indice (if (= datos '())
-                                    0
-                                    (reduce (fn [acc elt]
-                                              (max acc (get elt :id)))
-                                            0
-                                            datos))
-                    nuevo-indice (inc ultimo-indice)
-                    nuevo-elemento {:id nuevo-indice,
-                                    :rev 0
-                                    :value nuevo-dato}
-                    array-antiguo (into [] datos)
-                    nuevo-array (conj array-antiguo nuevo-elemento)
-                    nueva-lista (reverse (into '() nuevo-array))]
+        :else (let [nuevo-indice (if (= datos '())
+                                   1
+                                   (->> datos
+                                        (reduce (fn [acc elt]
+                                                  (max acc (get elt :id)))
+                                                0)
+                                        (inc)))
+                    nuevo-elemento (-> {:id nuevo-indice,
+                                        :rev 0
+                                        :value nuevo-dato}
+                                       (list)) 
+                    nueva-lista (reverse (into '() (concat datos nuevo-elemento)))] 
+                (io/guardar-a-disco nueva-lista nombre-fichero)
+                nueva-lista)))
+
+; actualizar :: Long -> Map -> (Map)
+(defn actualizar [id nuevo-dato datos nombre-fichero]
+  (cond (not (number? id)) (println "El primer parámetro de la función 'actualizar' debe ser un número.")
+        (not (map? nuevo-dato)) (println "El segundo parámetro de la función 'actualizar' debe ser un diccionario.")
+        (not (list? datos)) (println "El tercer parámetro de la función 'actualizar' debe ser una lista.")
+        (not (string? nombre-fichero)) (println "El cuarto parámetro de la función 'actualizar' debe ser una cadena.")
+        :else (let [nueva-revision (->> datos
+                                        (filter (fn [elt]
+                                                  (= (get elt :id) id)))
+                                        (reduce (fn [acc elt]
+                                                  (max acc (get elt :rev)))
+                                                0)
+                                        (inc)) 
+                    nuevo-elemento (list {:id id,
+                                          :rev nueva-revision
+                                          :value nuevo-dato})
+                    nueva-lista (reverse (into '() (concat datos nuevo-elemento)))]
                 (io/guardar-a-disco nueva-lista nombre-fichero)
                 nueva-lista)))

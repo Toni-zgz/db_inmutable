@@ -34,8 +34,17 @@
         lista4 '()
         lista5 '({:id 1, :rev 0, :value {:nombre "Alvaro", :edad 35}})
         lista6 '({:id 1, :rev 0, :value {:nombre "Alvaro", :edad 35}}
-                 {:id 2, :rev 0, :value {:nombre "Rosa", :edad 50}})]
+                 {:id 2, :rev 0, :value {:nombre "Rosa", :edad 50}})
+        lista7 '({:id 1, :rev 0, :value {:nombre "Alvaro", :edad 35}}
+                 {:id 2, :rev 0, :value {:nombre "Rosa", :edad 50}}
+                 {:id 1, :rev 1, :value {:nombre "Alvaro", :edad 19}})
+        lista8 '({:id 1, :rev 0, :value {:nombre "Alvaro", :edad 35}}
+                 {:id 2, :rev 0, :value {:nombre "Rosa", :edad 50}}
+                 {:id 1, :rev 1, :value {:nombre "Alvaro", :edad 19}}
+                 {:id 2, :rev 1, :value {:nombre "Rosa", :edad 50 :altura 165}})]
     (test/is (= (db/mover-elemento lista1 2 5) lista2))
     (test/is (= (db/mover-elemento lista1 2 6) lista3))
     (test/is (= (db/insertar {:nombre "Alvaro", :edad 35} lista4 "test.fiabledb") lista5))
-    (test/is (= (db/insertar {:nombre "Rosa", :edad 50} lista5 "test.fiabledb") lista6))))
+    (test/is (= (db/insertar {:nombre "Rosa", :edad 50} lista5 "test.fiabledb") lista6))
+    (test/is (= (db/actualizar 1 {:nombre "Alvaro", :edad 19} lista6 "test.fiabledb") lista7))
+    (test/is (= (db/actualizar 2 {:nombre "Rosa", :edad 50 :altura 165} lista7 "test.fiabledb") lista8))))
