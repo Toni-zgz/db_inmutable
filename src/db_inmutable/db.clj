@@ -55,7 +55,7 @@
                 (io/guardar-a-disco nueva-lista nombre-fichero)
                 nueva-lista)))
 
-; actualizar :: Long -> Map -> (Map)
+; actualizar :: Long -> Map -> (Map) -> String -> (Map)
 (defn actualizar [id nuevo-dato datos nombre-fichero]
   (cond (not (number? id)) (println "El primer parámetro de la función 'actualizar' debe ser un número.")
         (not (map? nuevo-dato)) (println "El segundo parámetro de la función 'actualizar' debe ser un diccionario.")
@@ -74,3 +74,10 @@
                     nueva-lista (reverse (into '() (concat datos nuevo-elemento)))]
                 (io/guardar-a-disco nueva-lista nombre-fichero)
                 nueva-lista)))
+
+; eliminar :: Long -> (Map) -> String -> (Map)
+(defn eliminar [id datos nombre-fichero]
+  (cond (not (number? id)) (println "El primer parámetro de la función 'eliminar' debe ser un número.")
+        (not (list? datos)) (println "El segundo parámetro de la función 'eliminar' debe ser una lista.")
+        (not (string? nombre-fichero)) (println "El tercer parámetro de la función 'eliminar' debe ser una cadena.")
+        :else (actualizar id {} datos nombre-fichero)))
