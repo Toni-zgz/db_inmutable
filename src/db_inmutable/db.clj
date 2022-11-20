@@ -1,8 +1,8 @@
 (ns db-inmutable.db
   (:require [db-inmutable.io :as io]))
 
-; reordenar-lista :: (Map) -> Long -> Long -> (Map)
-(defn mover-elemento [lista origen destino]
+; mover-elemento :: (Map) -> Long -> Long -> (Map)
+(defn- mover-elemento [lista origen destino]
   (let [nodo-origen (first (filter (fn [elt] (= (get elt :id) origen)) lista))
         lista-sin-nodo (filter (fn [elt] (not (= (get elt :id) origen))) lista)
         num-elems (count lista)]
