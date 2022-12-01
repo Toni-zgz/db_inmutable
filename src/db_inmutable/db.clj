@@ -81,3 +81,18 @@
         (not (list? datos)) (println "El segundo parámetro de la función 'eliminar' debe ser una lista.")
         (not (string? nombre-fichero)) (println "El tercer parámetro de la función 'eliminar' debe ser una cadena.")
         :else (actualizar id {} datos nombre-fichero)))
+
+; find-one :: Long -> (Map) -> (Map)
+(defn find-one [id datos]
+  (cond (not (number? id)) (println "El primer parámetro de la función 'find-one' debe ser un número.")
+        (not (list? datos)) (println "El segundo parámetro de la función 'find-one' debe ser una lista.")
+        :else (let [datos-id (filter (fn [elt]
+                                       (= (get elt :id) id))
+                                     datos)
+                    rev-max (reduce (fn [acc elt]
+                                      (max acc (get elt :rev)))
+                                    0
+                                    datos-id)]
+                (first (filter (fn [elt]
+                          (= (get elt :rev) rev-max))
+                        datos-id)))))
